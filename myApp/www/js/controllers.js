@@ -2,13 +2,6 @@ angular.module('starter.controllers', [])
 
     .controller('AppCtrl', function ($scope, $ionicModal, $timeout) {
 
-        // With the new view caching in Ionic, Controllers are only called
-        // when they are recreated or on app start, instead of every page change.
-        // To listen for when this page is active (for example, to refresh data),
-        // listen for the $ionicView.enter event:
-        //$scope.$on('$ionicView.enter', function(e) {
-        //});
-
         // Form data for the login modal
         $scope.loginData = {};
 
@@ -41,6 +34,46 @@ angular.module('starter.controllers', [])
         };
     })
 
+    .controller('AppHomepage', function ($scope, $cordovaGeolocation) {
+
+        var posOptions = {enableHighAccuracy: true, timeout: 2 * 3000, maximumAge: 0};
+
+        $cordovaGeolocation
+            .getCurrentPosition(posOptions)
+
+            .then(function (position) {
+                var lat = position.coords.latitude;
+                var long = position.coords.longitude;
+                $scope.latitude = lat;
+                $scope.longitude = long;
+                console.log(lat + '   ' + long)
+            }, function (err) {
+                console.log(err)
+            });
+
+        var watchOptions = {enableHighAccuracy: true, timeout: 2 * 3000, maximumAge: 0};
+        //var watchOptions = {timeout: 5000, enableHighAccuracy: false};
+        var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+        watch.then(
+            null,
+
+            function (err) {
+                console.log(err)
+            },
+
+            function (position) {
+                var lat = position.coords.latitude;
+                var long = position.coords.longitude;
+                $scope.latitude = lat;
+                $scope.longitude = long;
+                console.log(lat + '' + long)
+            }
+        );
+
+        //watch.clearWatch();
+    })
+
     .controller('AppNetwork', function ($scope, $cordovaNetwork, $rootScope) {
         document.addEventListener("deviceready", function () {
 
@@ -63,14 +96,14 @@ angular.module('starter.controllers', [])
         }, false);
     })
 
-    .controller('AppCamera', function($scope, $cordovaCamera) {
+    .controller('AppCamera', function ($scope, $cordovaCamera) {
 
-        $scope.takePicture = function() {
+        $scope.takePicture = function () {
             var options = {
-                quality : 75,
-                destinationType : Camera.DestinationType.DATA_URL,
-                sourceType : Camera.PictureSourceType.CAMERA,
-                allowEdit : true,
+                quality: 75,
+                destinationType: Camera.DestinationType.DATA_URL,
+                sourceType: Camera.PictureSourceType.CAMERA,
+                allowEdit: true,
                 encodingType: Camera.EncodingType.JPEG,
                 targetWidth: 300,
                 targetHeight: 300,
@@ -78,88 +111,12 @@ angular.module('starter.controllers', [])
                 saveToPhotoAlbum: false
             };
 
-            $cordovaCamera.getPicture(options).then(function(imageData) {
+            $cordovaCamera.getPicture(options).then(function (imageData) {
                 $scope.imgURI = "data:image/jpeg;base64," + imageData;
-            }, function(err) {
+            }, function (err) {
                 // An error occured. Show a message to the user
             });
         }
-    })
-
-    .controller('AppHomepage', function($scope, $cordovaGeolocation) {
-
-        var posOptions = {timeout: 10000, enableHighAccuracy: false};
-
-        $cordovaGeolocation
-            .getCurrentPosition(posOptions)
-
-            .then(function (position) {
-                var lat  = position.coords.latitude;
-                var long = position.coords.longitude;
-                $scope.location = lat + '   ' + long;
-                console.log(lat + '   ' + long)
-            }, function(err) {
-                console.log(err)
-            });
-
-        var watchOptions = {timeout : 3000, enableHighAccuracy: false};
-        var watch = $cordovaGeolocation.watchPosition(watchOptions);
-
-        watch.then(
-            null,
-
-            function(err) {
-                console.log(err)
-            },
-
-            function(position) {
-                var lat  = position.coords.latitude;
-                var long = position.coords.longitude;
-                $scope.location = lat + '   ' + long;
-                console.log(lat + '' + long)
-            }
-        );
-
-        watch.clearWatch();
     });
 
-    //.controller('AppHomepage', function ($scope, $cordovaGeolocation, $ionicLoading, $ionicPlatform) {
-    //
-    //    $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-    //
-    //    $ionicPlatform.ready(function() {
-    //
-    //        $ionicLoading.show({
-    //            template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
-    //        });
-    //
-    //        var posOptions = {
-    //            enableHighAccuracy: true,
-    //            timeout: 20000,
-    //            maximumAge: 0
-    //        };
-    //
-    //        $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-    //            var lat  = position.coords.latitude;
-    //            var long = position.coords.longitude;
-    //
-    //            var myLatlng = new google.maps.LatLng(lat, long);
-    //
-    //            var mapOptions = {
-    //                center: myLatlng,
-    //                zoom: 16,
-    //                mapTypeId: google.maps.MapTypeId.ROADMAP
-    //            };
-    //
-    //            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    //
-    //            $scope.map = map;
-    //            $ionicLoading.hide();
-    //
-    //        }, function(err) {
-    //            $ionicLoading.hide();
-    //            console.log(err);
-    //        });
-    //    });
-    //})
 
