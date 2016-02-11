@@ -1,0 +1,7 @@
+<ion-view view-title="Camera">
+    <ion-content ng-controller="AppCamera">
+        <img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">
+        <img ng-show="imgURI === undefined" ng-src="http://placehold.it/300x300">
+        <button class="button button-stable camera-btn" ng-click="takePicture()">Open camera</button>
+    </ion-content>
+</ion-view>
